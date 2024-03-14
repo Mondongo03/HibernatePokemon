@@ -3,27 +3,21 @@ package controller;
 import model.Author;
 import model.Movimiento;
 import model.Pokemon;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.*;
-
-import org.hibernate.SessionFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-public class AuthorController {
+public class PokemonController {
     private EntityManagerFactory entityManagerFactory;
 
-    public AuthorController() { }
+    public PokemonController() { }
 
-    public AuthorController(EntityManagerFactory entityManagerFactory) {
+    public PokemonController(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 
@@ -70,7 +64,8 @@ public class AuthorController {
     }
 
     /* Method to READ all Authors */
-    public void listAuthors() {
+    public void listarPokemons() {
+        int i = 0;
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         List<Pokemon> listaPokemon = em.createQuery("SELECT DISTINCT p FROM Pokemon p JOIN FETCH p.movimientos ORDER BY p.numero", Pokemon.class).getResultList();
@@ -81,7 +76,7 @@ public class AuthorController {
             System.out.print(pokemon.getTipoSecundario().toString()+", ");
             System.out.print(pokemon.getHabilidad().toString()+", ");
             System.out.print(pokemon.getHabilidadOculta().toString()+", ");
-            System.out.print(pokemon.getObjetoEquipado().toString()+", ");
+            System.out.print(pokemon.getObjetoEquipado().getNombre()+", ");
             System.out.print(pokemon.getHp()+", ");
             System.out.print(pokemon.getAtaque()+", ");
             System.out.print(pokemon.getDefensa()+", ");
@@ -92,9 +87,9 @@ public class AuthorController {
                 System.out.print(", "+movimiento.getNombre());
             }
             System.out.println();
-
+            i++;
         }
-        System.out.println("Después del for");
+        System.out.println(i+" Pokemons listados");
         em.getTransaction().commit();
         em.close();
     }
@@ -111,11 +106,11 @@ public class AuthorController {
     }
 
     /* Method to DELETE an Author from the records */
-    public void deleteAuthor(Integer authorId) {
+    public void eliminarPokemon(String nombrePokemon) {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
-        Author author = (Author) em.find(Author.class, authorId);
-        em.remove(author);
+        Pokemon pokemon = (Pokemon) em.find(Pokemon.class, nombrePokemon);
+        em.remove(pokemon);
         em.getTransaction().commit();
         em.close();
     }

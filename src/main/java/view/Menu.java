@@ -30,7 +30,7 @@ public class Menu {
                 System.out.println("valor no vàlid");
                 e.printStackTrace();
             }
-        } while (option != 1  && option != 0 && option!=2);
+        } while (option != 1  && option != 0 && option!=2 && option!=3);
 
         return option;
     }

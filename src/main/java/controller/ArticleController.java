@@ -3,17 +3,12 @@ package controller;
 import model.Article;
 import model.Author;
 import model.Magazine;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,7 +19,7 @@ public class ArticleController {
   private EntityManagerFactory entityManagerFactory;
 
   private MagazineController magazineController = new MagazineController();
-  private AuthorController authorController = new AuthorController();
+  private PokemonController pokemonController = new PokemonController();
 
   public ArticleController() { }
 
@@ -61,7 +56,7 @@ public class ArticleController {
     String linea = "";
 
     List<Magazine> magazinesList = magazineController.readMagazinesFile(magazinesFile);
-    List<Author> authorList = authorController.readAuthorsFile(authorsFile);
+    List<Author> authorList = pokemonController.readAuthorsFile(authorsFile);
 
     while ((linea = br.readLine()) != null) {
       StringTokenizer str = new StringTokenizer(linea, ",");
@@ -96,7 +91,7 @@ public class ArticleController {
 
     BufferedReader br = new BufferedReader(new FileReader(articlesFile));
     String linea = "";
-    List<Author> authorList = authorController.readAuthorsFile(authorsFile);
+    List<Author> authorList = pokemonController.readAuthorsFile(authorsFile);
     List<Article> articlesList = new ArrayList<Article>();
 
     while ((linea = br.readLine()) != null) {
