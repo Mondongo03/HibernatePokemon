@@ -20,7 +20,7 @@ public class Movimiento {
     private String categoria;
 
     @Column(name = "poder")
-    private String poder;
+    private int poder;
 
     @Column(name = "pp")
     private int pp;
@@ -31,7 +31,7 @@ public class Movimiento {
     @Column(name = "descripcion")
         private String descripcion;
 
-    public Movimiento(String nombre, String tipo, String categoria, String poder, int pp, String precision, String descripcion) {
+    public Movimiento(String nombre, String tipo, String categoria, int poder, int pp, String precision, String descripcion) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.categoria = categoria;
@@ -68,11 +68,11 @@ public class Movimiento {
         this.categoria = categoria;
     }
 
-    public String getPoder() {
+    public int getPoder() {
         return poder;
     }
 
-    public void setPoder(String poder) {
+    public void setPoder(int poder) {
         this.poder = poder;
     }
 

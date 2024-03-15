@@ -1,8 +1,6 @@
 package controller;
 
-import model.Author;
-import model.Movimiento;
-import model.Pokemon;
+import model.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -92,6 +90,78 @@ public class PokemonController {
         System.out.println(i+" Pokemons listados");
         em.getTransaction().commit();
         em.close();
+    }
+
+    public void poblarPokemonCsv(){
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        List<Objeto> listaObjeto = em.createQuery("from Objeto", Objeto.class).getResultList();
+        List<Movimiento> listaMovimiento = em.createQuery("from Movimiento", Movimiento.class).getResultList();
+        Objeto objetoComparado = null;
+        Movimiento movimientoComparado = null;
+        Movimiento movimientoComparado2 = null;
+        Movimiento movimientoComparado3 = null;
+        Movimiento movimientoComparado4 = null;
+
+        // Leer el archivo CSV
+        String csvFile = "src/main/resources/Pokemon.csv";
+        String line = "";
+        String cvsSplitBy = ",";
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String[] header = br.readLine().split(cvsSplitBy); // Leer el encabezado del CSV
+
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(cvsSplitBy);
+
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = data[i].replaceAll("^\"|\"$", ""); // Eliminar comillas al principio y al final
+                }
+                // Crear un objeto Objeto y asignar los valores desde el CSV
+                Pokemon pokemon = new  Pokemon();
+                pokemon.setNombre(data[0]);
+                pokemon.setNumero(Integer.parseInt(data[1]));
+                pokemon.setTipoPrimario(data[2]);// Eliminar espacios en blanco
+                pokemon.setTipoSecundario(data[3]); // Convertir la cadena a un número entero
+                pokemon.setHabilidad(data[4]);
+                pokemon.setHabilidadOculta(data[5]);
+                for (Objeto objeto : listaObjeto) {
+
+                   if (objeto.getNombre().equals(data[6])){
+                       System.out.println(objeto.getNombre());
+                       System.out.println(data[6]);
+                       System.out.println(objetoComparado);
+                       objetoComparado = objeto;
+                   }
+                }
+                pokemon.setObjetoEquipado(objetoComparado);
+                pokemon.setHp(Integer.parseInt(data[7]));
+                pokemon.setAtaque(Integer.parseInt(data[8]));
+                pokemon.setDefensa(Integer.parseInt(data[9]));
+                pokemon.setVelocidad(Integer.parseInt(data[10]));
+                pokemon.setAtaqueEspecial(Integer.parseInt(data[11]));
+                pokemon.setDefensaEspecial(Integer.parseInt(data[12]));
+                em.merge(pokemon);
+
+                for (int i = 0; i < 4; i++) {
+                    PokemonMovimiento pokemonMovimiento = new PokemonMovimiento();
+                    pokemonMovimiento.setPokemon(pokemon);
+
+                    Movimiento movimiento = null;
+                    for (Movimiento mov : listaMovimiento) {
+                        if (mov.getNombre().equals(data[13 + i])) {
+                            movimiento = mov;
+                            break;
+                        }
+                    }
+                        pokemonMovimiento.setMovimiento(movimiento);
+                        em.merge(pokemonMovimiento);
+                    }
+            }
+            em.getTransaction().commit();
+            em.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /* Method to UPDATE activity for an Author */

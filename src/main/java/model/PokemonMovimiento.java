@@ -8,11 +8,14 @@ import java.io.Serializable;
 public class PokemonMovimiento implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "pokemon_nombre", referencedColumnName = "nombre")
     private Pokemon pokemon;
 
-    @Id
+
     @ManyToOne
     @JoinColumn(name = "movimiento_nombre", referencedColumnName = "nombre")
     private Movimiento movimiento;
@@ -23,6 +26,14 @@ public class PokemonMovimiento implements Serializable {
 
     public void setPokemon(Pokemon pokemon) {
         this.pokemon = pokemon;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Movimiento getMovimiento() {
@@ -36,7 +47,8 @@ public class PokemonMovimiento implements Serializable {
     public PokemonMovimiento() {
     }
 
-    public PokemonMovimiento(Pokemon pokemon, Movimiento movimiento) {
+    public PokemonMovimiento(Long id, Pokemon pokemon, Movimiento movimiento) {
+        this.id = id;
         this.pokemon = pokemon;
         this.movimiento = movimiento;
     }

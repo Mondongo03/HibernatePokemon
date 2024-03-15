@@ -1,12 +1,8 @@
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-import controller.ArticleController;
+import controller.MovimientoController;
+import controller.ObjetoController;
 import controller.PokemonController;
-import controller.MagazineController;
-import model.*;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -48,7 +44,10 @@ public class Main {
     public static void main(String[] args) {
         EntityManagerFactory entityManagerFactory = createEntityManagerFactory();
         PokemonController pokemonController = new PokemonController(entityManagerFactory);
+        ObjetoController objetoController= new ObjetoController(entityManagerFactory);
+        MovimientoController movimientoController = new MovimientoController(entityManagerFactory);
         int opcio;
+        Scanner input = new Scanner(System.in);
         do {
             Menu menu = new Menu();
 
@@ -56,14 +55,20 @@ public class Main {
             switch (opcio) {
 
                 case 1:
+                    objetoController.poblarObjetoCsv();
                     break;
                 case 2:
                     pokemonController.listarPokemons();
                     break;
                 case 3:
-                    Scanner input = new Scanner(System.in);
                     String pokemon = input.nextLine();
                     pokemonController.eliminarPokemon(pokemon);
+                    break;
+                case 4:
+                    movimientoController.poblarMovimientoCsv();
+                    break;
+                case 5:
+                    pokemonController.poblarPokemonCsv();
                     break;
                 default:
                     System.out.println("Adeu!!");
