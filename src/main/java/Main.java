@@ -55,20 +55,24 @@ public class Main {
             switch (opcio) {
 
                 case 1:
-                    objetoController.poblarObjetoCsv();
-                    break;
-                case 2:
                     pokemonController.listarPokemons();
                     break;
+                case 2:
+                    objetoController.listarObjetos();
+                    break;
                 case 3:
-                    String pokemon = input.nextLine();
-                    pokemonController.eliminarPokemon(pokemon);
+                    movimientoController.listarMovimientos();
+                    //String pokemon = input.nextLine();
+                    //pokemonController.eliminarPokemon(pokemon);
                     break;
                 case 4:
-                    movimientoController.poblarMovimientoCsv();
+                    pokemonController.poblarPokemonCsv();
                     break;
                 case 5:
-                    pokemonController.poblarPokemonCsv();
+                    objetoController.poblarObjetoCsv();
+                    break;
+                case 6:
+                    movimientoController.poblarMovimientoCsv();
                     break;
                 default:
                     System.out.println("Adeu!!");

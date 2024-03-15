@@ -28,28 +28,18 @@ public class ObjetoController {
   public ObjetoController(EntityManagerFactory entityManagerFactory) {
     this.entityManagerFactory = entityManagerFactory;
   }
-  public void listarPokemons() {
+
+  public void listarObjetos() {
     int i = 0;
     EntityManager em = entityManagerFactory.createEntityManager();
     em.getTransaction().begin();
-    List<Objeto> listaObjeto = em.createQuery("form Objeto", Objeto.class).getResultList();
+    List<Objeto> listaObjeto = em.createQuery("from Objeto", Objeto.class).getResultList();
     for (Objeto objeto : listaObjeto) {
       System.out.print(objeto.getNombre().toString()+", ");
-      //System.out.print(objeto.getNumero()+", ");
-      //System.out.print(pokemon.getTipoPrimario().toString()+", ");
-      //System.out.print(pokemon.getTipoSecundario().toString()+", ");
-      //System.out.print(pokemon.getHabilidad().toString()+", ");
-      //System.out.print(pokemon.getHabilidadOculta().toString()+", ");
-      //System.out.print(pokemon.getObjetoEquipado().getNombre()+", ");
-      //System.out.print(pokemon.getHp()+", ");
-      //System.out.print(pokemon.getAtaque()+", ");
-      //System.out.print(pokemon.getDefensa()+", ");
-      //System.out.print(pokemon.getVelocidad()+", ");
-      //System.out.print(pokemon.getAtaqueEspecial()+", ");
-      //System.out.print(pokemon.getDefensaEspecial());
-      //for (Movimiento movimiento : pokemon.getMovimientos()) {
-        //System.out.print(", "+movimiento.getNombre());
-      //}
+      System.out.print(objeto.getGeneracion().toString()+", ");
+      System.out.print(objeto.getPrecioCompra().toString()+", ");
+      System.out.print(objeto.getPrecioVenta().toString()+", ");
+      System.out.print(objeto.getTipo().toString());
       System.out.println();
       i++;
     }
@@ -57,6 +47,8 @@ public class ObjetoController {
     em.getTransaction().commit();
     em.close();
   }
+
+
   public void poblarObjetoCsv(){
     EntityManager em = entityManagerFactory.createEntityManager();
     em.getTransaction().begin();

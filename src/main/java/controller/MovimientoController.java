@@ -1,12 +1,14 @@
 package controller;
 
 import model.Movimiento;
+import model.Objeto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 public class MovimientoController {
     private EntityManagerFactory entityManagerFactory;
@@ -17,6 +19,26 @@ public class MovimientoController {
         this.entityManagerFactory = entityManagerFactory;
     }
 
+    public void listarMovimientos() {
+        int i = 0;
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        List<Movimiento> listaMovimiento = em.createQuery("from Movimiento", Movimiento.class).getResultList();
+        for (Movimiento movimiento : listaMovimiento) {
+            System.out.print(movimiento.getNombre().toString()+", ");
+            System.out.print(movimiento.getTipo().toString()+", ");
+            System.out.print(movimiento.getCategoria().toString()+", ");
+            System.out.print(movimiento.getPoder() +", ");
+            System.out.print(movimiento.getPp()+", ");
+            System.out.print(movimiento.getPrecision().toString()+", ");
+            System.out.print(movimiento.getDescripcion().toString()+", ");
+            System.out.println();
+            i++;
+        }
+        System.out.println(i+" Pokemons listados");
+        em.getTransaction().commit();
+        em.close();
+    }
     public void poblarMovimientoCsv(){
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
