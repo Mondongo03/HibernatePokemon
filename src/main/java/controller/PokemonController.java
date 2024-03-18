@@ -3,12 +3,16 @@ package controller;
 import model.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PokemonController {
     private EntityManagerFactory entityManagerFactory;
@@ -98,13 +102,25 @@ public class PokemonController {
         List<Objeto> listaObjeto = em.createQuery("from Objeto", Objeto.class).getResultList();
         List<Movimiento> listaMovimiento = em.createQuery("from Movimiento", Movimiento.class).getResultList();
         Objeto objetoComparado = null;
-        Movimiento movimientoComparado = null;
-        Movimiento movimientoComparado2 = null;
-        Movimiento movimientoComparado3 = null;
-        Movimiento movimientoComparado4 = null;
+        JFileChooser fileChooser = new JFileChooser();
 
+        // Configurar el filtro para mostrar solo archivos con extensión CSV
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+        fileChooser.setFileFilter(filter);
+        File csvFile = null;
+        // Mostrar la ventana de selección de archivos
+        int result = fileChooser.showOpenDialog(null);
+
+        // Verificar si el usuario seleccionó un archivo
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // Obtener el archivo seleccionado
+            csvFile = fileChooser.getSelectedFile();
+            System.out.println("Archivo seleccionado: " + csvFile.getAbsolutePath());
+        } else {
+            System.out.println("No se seleccionó ningún archivo.");
+            return;
+        }
         // Leer el archivo CSV
-        String csvFile = "src/main/resources/Pokemon.csv";
         String line = "";
         String cvsSplitBy = ",";
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -124,13 +140,11 @@ public class PokemonController {
                 pokemon.setTipoSecundario(data[3]); // Convertir la cadena a un número entero
                 pokemon.setHabilidad(data[4]);
                 pokemon.setHabilidadOculta(data[5]);
+                objetoComparado = null;
                 for (Objeto objeto : listaObjeto) {
-
                    if (objeto.getNombre().equals(data[6])){
-                       System.out.println(objeto.getNombre());
-                       System.out.println(data[6]);
-                       System.out.println(objetoComparado);
                        objetoComparado = objeto;
+                       break;
                    }
                 }
                 pokemon.setObjetoEquipado(objetoComparado);
@@ -140,6 +154,8 @@ public class PokemonController {
                 pokemon.setVelocidad(Integer.parseInt(data[10]));
                 pokemon.setAtaqueEspecial(Integer.parseInt(data[11]));
                 pokemon.setDefensaEspecial(Integer.parseInt(data[12]));
+
+                System.out.println(pokemon.getNombre());
                 em.merge(pokemon);
 
                 for (int i = 0; i < 4; i++) {
@@ -179,9 +195,27 @@ public class PokemonController {
     public void eliminarPokemon(String nombrePokemon) {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
-        Pokemon pokemon = (Pokemon) em.find(Pokemon.class, nombrePokemon);
+
+        // Buscar los PokemonMovimiento asociados al Pokemon con el nombre especificado
+        Query query = em.createQuery("SELECT pm FROM PokemonMovimiento pm WHERE pm.pokemon.nombre = :nombrePokemon");
+        query.setParameter("nombrePokemon", nombrePokemon);
+        List<PokemonMovimiento> pokemonMovimientos = query.getResultList();
+        // Eliminar cada PokemonMovimiento encontrado
+        for (PokemonMovimiento pokemonMovimiento : pokemonMovimientos) {
+            em.remove(pokemonMovimiento);
+        }
+// Eliminar el Pokemon
+        // Finalizar la transacción
+        em.getTransaction().commit();
+        em.getTransaction().begin();
+        Pokemon pokemon = em.find(Pokemon.class, nombrePokemon);
+        System.out.println(pokemon.getNombre());
         em.remove(pokemon);
         em.getTransaction().commit();
         em.close();
     }
+
+
+
+
 }

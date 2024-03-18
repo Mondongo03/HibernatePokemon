@@ -3,6 +3,7 @@ package view;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 public class Menu {
     private int option;
@@ -10,7 +11,7 @@ public class Menu {
     public Menu() {
         super();
     }
-
+    Scanner scanner = new Scanner(System.in);
     public int mainMenu() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -24,6 +25,7 @@ public class Menu {
             System.out.println("4. Poblar masivamente Pokemons vía csv ");
             System.out.println("5. Poblar masivamente Objetos vía csv ");
             System.out.println("6. Poblar masivamente Movimientos vía csv ");
+            System.out.println("7. Eliminar un Pokemon por nombre ");
 
             System.out.println("0. Sortir. ");
 
@@ -34,9 +36,16 @@ public class Menu {
                 System.out.println("valor no vàlid");
                 e.printStackTrace();
             }
-        } while (option != 1  && option != 0 && option!=2 && option!=3 && option!=4 && option!=5 && option!=6);
+        } while (option != 1  && option != 0 && option!=2 && option!=3 && option!=4 && option!=5 && option!=6 && option!=7);
 
         return option;
+    }
+    public String menuEliminarPokemon(){
+        System.out.println("Que Pokemon quieres eliminar?");
+
+        String pokemon = scanner.nextLine();
+
+        return pokemon;
     }
 
 

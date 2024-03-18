@@ -5,7 +5,10 @@ import model.Objeto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +46,24 @@ public class MovimientoController {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         // Leer el archivo CSV
-        String csvFile = "src/main/resources/Movimiento.csv";
+        JFileChooser fileChooser = new JFileChooser();
+
+        // Configurar el filtro para mostrar solo archivos con extensión CSV
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+        fileChooser.setFileFilter(filter);
+        File csvFile = null;
+        // Mostrar la ventana de selección de archivos
+        int result = fileChooser.showOpenDialog(null);
+
+        // Verificar si el usuario seleccionó un archivo
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // Obtener el archivo seleccionado
+            csvFile = fileChooser.getSelectedFile();
+            System.out.println("Archivo seleccionado: " + csvFile.getAbsolutePath());
+        } else {
+            System.out.println("No se seleccionó ningún archivo.");
+            return;
+        }
         String line = "";
         String cvsSplitBy = ",";
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {

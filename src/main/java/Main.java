@@ -74,6 +74,10 @@ public class Main {
                 case 6:
                     movimientoController.poblarMovimientoCsv();
                     break;
+                case 7:
+                    String pokemon = menu.menuEliminarPokemon();
+                    pokemonController.eliminarPokemon(pokemon);
+                    break;
                 default:
                     System.out.println("Adeu!!");
                     System.exit(1);

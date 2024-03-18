@@ -11,7 +11,10 @@ import org.hibernate.cfg.Configuration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -52,8 +55,28 @@ public class ObjetoController {
   public void poblarObjetoCsv(){
     EntityManager em = entityManagerFactory.createEntityManager();
     em.getTransaction().begin();
+    List<Objeto> listaObjeto = em.createQuery("from Objeto", Objeto.class).getResultList();
+    List<Movimiento> listaMovimiento = em.createQuery("from Movimiento", Movimiento.class).getResultList();
+    Objeto objetoComparado = null;
+    JFileChooser fileChooser = new JFileChooser();
+
+    // Configurar el filtro para mostrar solo archivos con extensión CSV
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+    fileChooser.setFileFilter(filter);
+    File csvFile = null;
+    // Mostrar la ventana de selección de archivos
+    int result = fileChooser.showOpenDialog(null);
+
+    // Verificar si el usuario seleccionó un archivo
+    if (result == JFileChooser.APPROVE_OPTION) {
+      // Obtener el archivo seleccionado
+      csvFile = fileChooser.getSelectedFile();
+      System.out.println("Archivo seleccionado: " + csvFile.getAbsolutePath());
+    } else {
+      System.out.println("No se seleccionó ningún archivo.");
+      return;
+    }
     // Leer el archivo CSV
-    String csvFile = "src/main/resources/Objeto.csv";
     String line = "";
     String cvsSplitBy = ",";
 
