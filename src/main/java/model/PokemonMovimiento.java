@@ -7,6 +7,12 @@ import java.io.Serializable;
 @Table(name = "pokemon_movimiento")
 public class PokemonMovimiento implements Serializable {
 
+    /**
+     * La clase PokemonMovimiento es una tabla intermedia para las relaciones
+     * @param id es el id del registro
+     * @param pokemon hace referencia al join de la tabla pokemon
+     * @param movimiento hace referencia al join de la tabla pokemon
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

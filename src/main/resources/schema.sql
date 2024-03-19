@@ -1,3 +1,23 @@
+
+CREATE TABLE objeto (
+    nombre character varying(255) PRIMARY KEY,
+    generacion character varying(255),
+    precio_compra character varying(255),
+    precio_venta character varying(255),
+    tipo character varying(255)
+);
+
+CREATE TABLE movimiento (
+    nombre character varying(255) PRIMARY KEY,
+    tipo character varying(255),
+    categoria character varying(255),
+    poder integer,
+    pp integer,
+    precision character varying(255),
+    descripcion character varying(255)
+    CONSTRAINT numberone UNIQUE (nombre)
+);
+
 CREATE TABLE pokemon (
     nombre character varying(255),
     numero integer,
@@ -22,24 +42,6 @@ CREATE TABLE pokemon (
     CONSTRAINT pokemon_movimiento3_fkey FOREIGN KEY (movimiento3) REFERENCES movimiento(nombre),
     CONSTRAINT pokemon_movimiento4_fkey FOREIGN KEY (movimiento4) REFERENCES movimiento(nombre),
     CONSTRAINT pokemon_objeto_equipado_fkey FOREIGN KEY (objeto_equipado) REFERENCES objeto(nombre)
-);
-
-CREATE TABLE objeto (
-    nombre character varying(255) PRIMARY KEY,
-    generacion character varying(255),
-    precio_compra character varying(255),
-    precio_venta character varying(255),
-    tipo character varying(255)
-);
-
-CREATE TABLE movimiento (
-    nombre character varying(255) PRIMARY KEY,
-    tipo character varying(255),
-    categoria character varying(255),
-    poder integer,
-    pp integer,
-    precision character varying(255),
-    descripcion character varying(255)
 );
 
 CREATE TABLE pokemon_movimiento (

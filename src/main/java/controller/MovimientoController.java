@@ -2,9 +2,11 @@ package controller;
 
 import model.Movimiento;
 import model.Objeto;
+import model.Pokemon;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedReader;
@@ -13,6 +15,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Controller de la clase Movimiento
+ */
 public class MovimientoController {
     private EntityManagerFactory entityManagerFactory;
 
@@ -22,6 +27,9 @@ public class MovimientoController {
         this.entityManagerFactory = entityManagerFactory;
     }
 
+    /**
+     * El método listarMovimientos lo que hace es una query a la bbdd de todos los movimientos y luego va printando sus atributos en un foreach de la list creada en base a la query
+     */
     public void listarMovimientos() {
         int i = 0;
         EntityManager em = entityManagerFactory.createEntityManager();
@@ -42,6 +50,10 @@ public class MovimientoController {
         em.getTransaction().commit();
         em.close();
     }
+
+    /**
+     * El método poblarMovimientosCsv lo que hace es abrir una ventana del explodor de ficheros para elegir un csv que con BufferReader irá rellenando todos los campos de los movimientos linea por linea para luego hacer el merge de cada movimiento en bucle en la bbdd
+     */
     public void poblarMovimientoCsv(){
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
@@ -96,5 +108,29 @@ public class MovimientoController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Modifica todos los movimiento de un tipo en concreto
+     * @param tipo es el tipo de los movimientos que se verán afectados
+     * @param nuevoValor es el nuevo valor que asignaras al atributo que modifiques
+     * @param opcion es para elegir que atributo modificarás
+     */
+    public void actualizarMovimientosPorTipo(String tipo, int nuevoValor, int opcion) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        int i = 0;
+        Query query = em.createQuery("SELECT m FROM Movimiento m WHERE m.tipo = :tipo", Movimiento.class);
+        query.setParameter("tipo", tipo);
+        List<Movimiento> movimientos = query.getResultList();
+        for (Movimiento movimiento : movimientos) {
+            if(opcion == 1) movimiento.setPoder(nuevoValor);
+            if(opcion == 2) movimiento.setPp(nuevoValor);
+            em.merge(movimiento);
+            i++;
+        }
+        em.getTransaction().commit();
+        em.close();
+        System.out.println(i+" movimentos actualizados");
     }
 }

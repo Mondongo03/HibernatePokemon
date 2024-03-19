@@ -6,7 +6,24 @@ import java.util.Set;
 @Entity
 @Table(name = "pokemon")
 public class Pokemon {
-
+    /**
+     * La clase Pokemon representa a un Pokémon en el sistema.
+     *
+     * @param nombre El nombre del Pokémon.
+     * @param numero El número del Pokémon.
+     * @param tipoPrimario El tipo primario del Pokémon.
+     * @param tipoSecundario El tipo secundario del Pokémon.
+     * @param habilidad La habilidad del Pokémon.
+     * @param habilidadOculta La habilidad oculta del Pokémon.
+     * @param objetoEquipado El objeto que lleva equipado el Pokémon.
+     * @param hp Puntos de salud (HP) del Pokémon.
+     * @param ataque Puntos de ataque del Pokémon.
+     * @param defensa Puntos de defensa del Pokémon.
+     * @param velocidad Velocidad del Pokémon.
+     * @param ataqueEspecial Puntos de ataque especial del Pokémon.
+     * @param defensaEspecial Puntos de defensa especial del Pokémon.
+     * @param movimientos Los movimientos que puede aprender el Pokémon.
+     */
     @Id
     @Column(name = "nombre")
     private String nombre;

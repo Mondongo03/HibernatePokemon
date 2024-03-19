@@ -5,7 +5,15 @@ import javax.persistence.*;
 @Entity
 @Table(name = "objeto")
 public class Objeto {
-
+    /**
+     * La clase Objeto representa un objeto en el sistema.
+     *
+     * @param nombre El nombre del objeto.
+     * @param generacion La generación a la que pertenece el objeto.
+     * @param precioCompra El precio de compra del objeto.
+     * @param precioVenta El precio de venta del objeto.
+     * @param tipo El tipo o categoría del objeto.
+     */
     @Id
     @Column(name = "nombre")
     private String nombre;

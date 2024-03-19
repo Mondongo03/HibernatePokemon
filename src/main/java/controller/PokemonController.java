@@ -14,6 +14,9 @@ import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Controller de la clase Pokemon
+ */
 public class PokemonController {
     private EntityManagerFactory entityManagerFactory;
 
@@ -23,49 +26,9 @@ public class PokemonController {
         this.entityManagerFactory = entityManagerFactory;
     }
 
-    public List<Author> readAuthorsFile(String filename) throws IOException {
-        int id;
-        String name, year, country;
-        boolean active;
-        List<Author> authorsList = new ArrayList<Author>();
-
-        BufferedReader br = new BufferedReader(new FileReader(filename));
-        String linea = "";
-        while ((linea = br.readLine()) != null) {
-            StringTokenizer str = new StringTokenizer(linea, ",");
-            id = Integer.parseInt(str.nextToken());
-            name = str.nextToken();
-            year = str.nextToken();
-            country = str.nextToken();
-            active = Boolean.parseBoolean(str.nextToken());
-            // System.out.println(id + name + country + year + active);
-            authorsList.add(new Author(id, name, country, year, active));
-        }
-        br.close();
-
-        return authorsList;
-    }
-
-    public void printAutors(ArrayList<Author> authorsList) {
-        for (int i = 0; i < authorsList.size(); i++) {
-            System.out.println(authorsList.get(i).toString());
-        }
-    }
-
-    /* Method to CREATE an Author in the database */
-    public void addAuthor(Author author) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.getTransaction().begin();
-        Author authotExists = (Author) em.find(Author.class, author.getAuthorId());
-        if (authotExists == null) {
-            System.out.println("insert autor");
-            em.persist(author);
-        }
-        em.getTransaction().commit();
-        em.close();
-    }
-
-    /* Method to READ all Authors */
+    /**
+     * El método listarPokemons lo que hace es una query a la bbdd de todos los pokemons y luego va printando sus atributos en un foreach de la list creada en base a la query
+     */
     public void listarPokemons() {
         int i = 0;
         EntityManager em = entityManagerFactory.createEntityManager();
@@ -96,6 +59,9 @@ public class PokemonController {
         em.close();
     }
 
+    /**
+     * El método poblarPokemonCsv lo que hace es abrir una ventana del explodor de ficheros para elegir un csv que con BufferReader irá rellenando todos los campos de los pokemons linea por linea para luego hacer el merge de cada pokemon en bucle en la bbdd
+     */
     public void poblarPokemonCsv(){
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
@@ -180,18 +146,10 @@ public class PokemonController {
         }
     }
 
-    /* Method to UPDATE activity for an Author */
-    public void updateAutor(Integer authorId, boolean active) {
-        EntityManager em = entityManagerFactory.createEntityManager();
-        em.getTransaction().begin();
-        Author author = (Author) em.find(Author.class, authorId);
-        author.setActive(active);
-        em.merge(author);
-        em.getTransaction().commit();
-        em.close();
-    }
-
-    /* Method to DELETE an Author from the records */
+    /**
+     * El método eliminarPokemon lo que hace hacer una query con el nombrePokemon y luego printar sus atributos
+     * @param nombrePokemon es el nombre del pokemon que quieres ver sus datos
+     */
     public void eliminarPokemon(String nombrePokemon) {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
@@ -204,8 +162,7 @@ public class PokemonController {
         for (PokemonMovimiento pokemonMovimiento : pokemonMovimientos) {
             em.remove(pokemonMovimiento);
         }
-// Eliminar el Pokemon
-        // Finalizar la transacción
+
         em.getTransaction().commit();
         em.getTransaction().begin();
         Pokemon pokemon = em.find(Pokemon.class, nombrePokemon);
@@ -214,6 +171,88 @@ public class PokemonController {
         em.getTransaction().commit();
         em.close();
     }
+
+    /**
+     * El método PokemonPorTipo lo que hace es hacer una query con el tipo (los pokemons que tengan uno de los 2 tipos == tipo) para en base al resultado de la query en un bucle foreach ir eliminadolos
+     * @param tipo es el tipo del pokemon, ya sea primario o secundario
+     */
+    public void eliminarPokemonPorTipo(String tipo) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+
+        Query query = em.createQuery("SELECT p FROM Pokemon p WHERE p.tipoPrimario = :tipo OR p.tipoSecundario = :tipo");
+        query.setParameter("tipo", tipo);
+        List<Pokemon> pokemons = query.getResultList();
+
+        for (Pokemon pokemon : pokemons) {
+            // Obtener los movimientos asociados al Pokémon y eliminarlos
+            Query movimientoQuery = em.createQuery("SELECT pm FROM PokemonMovimiento pm WHERE pm.pokemon = :pokemon");
+            movimientoQuery.setParameter("pokemon", pokemon);
+
+            em.remove(pokemon);
+        }
+
+        // Finalizar la transacción
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    /**
+     * El método eliminarPokemonPorHabilidad lo que hace es hacer una query con la habilidad (los pokemons que tengan esa habilidad) para en base al resultado de la query en un bucle foreach ir eliminadolos
+     * @param habilidad es la habilida del pokemon
+     */
+    public void eliminarPokemonPorHabilidad(String habilidad) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+
+        Query query = em.createQuery("SELECT p FROM Pokemon p WHERE p.habilidadOculta = :habilidad");
+        query.setParameter("habilidad", habilidad);
+        List<Pokemon> pokemons = query.getResultList();
+
+        for (Pokemon pokemon : pokemons) {
+            // Obtener los movimientos asociados al Pokémon y eliminarlos
+            Query movimientoQuery = em.createQuery("SELECT pm FROM PokemonMovimiento pm WHERE pm.pokemon = :pokemon");
+            movimientoQuery.setParameter("pokemon", pokemon);
+
+            em.remove(pokemon);
+        }
+
+        // Finalizar la transacción
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    /**
+     *El método eliminarPokemonPorObjeto lo que hace es hacer una query con el objeto equipado del pokemon para en base al resultado de la query en un bucle foreach ir eliminadolos
+     * @param objetoNombre es el objeto equipado del pokemon
+     */
+    public void eliminarPokemonPorObjeto(String objetoNombre) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+
+        // Obtener el objeto Objeto correspondiente al nombre proporcionado
+        Query objetoQuery = em.createQuery("SELECT o FROM Objeto o WHERE o.nombre = :nombre");
+        objetoQuery.setParameter("nombre", objetoNombre);
+        Objeto objeto = (Objeto) objetoQuery.getSingleResult();
+
+        // Consulta para encontrar los pokemons que tienen el objeto equipado
+        Query query = em.createQuery("SELECT p FROM Pokemon p WHERE p.objetoEquipado = :objeto");
+        query.setParameter("objeto", objeto);
+        List<Pokemon> pokemons = query.getResultList();
+
+        for (Pokemon pokemon : pokemons) {
+            // Obtener los movimientos asociados al Pokémon y eliminarlos
+            Query movimientoQuery = em.createQuery("SELECT pm FROM PokemonMovimiento pm WHERE pm.pokemon = :pokemon");
+            movimientoQuery.setParameter("pokemon", pokemon);
+
+            em.remove(pokemon);
+        }
+
+        // Finalizar la transacción
+        em.getTransaction().commit();
+        em.close();
+    }
+
 
 
 

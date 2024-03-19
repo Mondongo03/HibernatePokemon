@@ -1,16 +1,11 @@
 package controller;
 
-import model.Article;
 import model.Movimiento;
 import model.Objeto;
-import model.Pokemon;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedReader;
@@ -22,6 +17,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+/**
+ * Controller de la clase Objeto
+ */
 public class ObjetoController {
 
   private EntityManagerFactory entityManagerFactory;
@@ -32,6 +30,9 @@ public class ObjetoController {
     this.entityManagerFactory = entityManagerFactory;
   }
 
+  /**
+   * El método listarObjetos lo que hace es una query a la bbdd de todos los objetos y luego va printando sus atributos en un foreach de la list creada en base a la query
+   */
   public void listarObjetos() {
     int i = 0;
     EntityManager em = entityManagerFactory.createEntityManager();
@@ -51,7 +52,9 @@ public class ObjetoController {
     em.close();
   }
 
-
+  /**
+   * El método poblarObjetosCsv lo que hace es abrir una ventana del explodor de ficheros para elegir un csv que con BufferReader irá rellenando todos los campos de los objetos linea por linea para luego hacer el merge de cada objeto en bucle en la bbdd
+   */
   public void poblarObjetoCsv(){
     EntityManager em = entityManagerFactory.createEntityManager();
     em.getTransaction().begin();
@@ -106,83 +109,29 @@ public class ObjetoController {
       e.printStackTrace();
     }
   }
-  public List<Article>  readArticlesFile(String articlesFile, String authorsFile) throws IOException {
-    int articleId, magazineId, authorId;
-    String title;
-    Date creationDate;
-    boolean publishable;
-    DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD");
 
-    BufferedReader br = new BufferedReader(new FileReader(articlesFile));
-    String linea = "";
-    //List<Author> authorList = pokemonController.readAuthorsFile(authorsFile);
-    List<Article> articlesList = new ArrayList<Article>();
-
-    while ((linea = br.readLine()) != null) {
-      StringTokenizer str = new StringTokenizer(linea, ",");
-      articleId = Integer.parseInt(str.nextToken());
-      magazineId = Integer.parseInt(str.nextToken());
-      authorId = Integer.parseInt(str.nextToken());
-      title = str.nextToken();
-
-      try {
-        creationDate = dateFormat.parse(str.nextToken());
-        publishable = Boolean.parseBoolean(str.nextToken());
-
-        //articlesList.add(new Article(articleId, title, creationDate, publishable, authorList.get(authorId - 1)));
-
-      } catch (ParseException e) {
-
-        e.printStackTrace();
-      }
-
-    }
-    br.close();
-    return articlesList;
-
-  }
-
-  /* Method to CREATE an Article in the database */
-  public void addArticle(Article article) {
+  /**
+   * Modifica un objeto en concreto
+   * @param objeto es el objeto que vas a modificar
+   * @param nuevoValor es el valor nuevo que vas a asignarle al atributo que modifiques
+   * @param opcion es para elegir que atributo vas a modificar
+   */
+  public void modificarObjeto(String objeto, String nuevoValor, int opcion){
     EntityManager em = entityManagerFactory.createEntityManager();
     em.getTransaction().begin();
-    em.merge(article);
+
+    Query query = em.createQuery("SELECT m FROM Objeto m WHERE m.nombre = :nombre", Objeto.class);
+    query.setParameter("nombre", objeto);
+    Objeto objetoSeleccionado = (Objeto) query.getSingleResult();
+      if(opcion == 2) objetoSeleccionado.setGeneracion(nuevoValor);
+      if(opcion == 3) objetoSeleccionado.setPrecioCompra(nuevoValor);
+      if(opcion == 4) objetoSeleccionado.setPrecioVenta(nuevoValor);
+      if(opcion == 5) objetoSeleccionado.setTipo(nuevoValor);
+
+      em.merge(objetoSeleccionado);
+
     em.getTransaction().commit();
     em.close();
+    System.out.println(" objeto actualizado con éxito");
   }
-
-  /* Method to READ all Articles */
-  public void listArticles() {
-    EntityManager em = entityManagerFactory.createEntityManager();
-    em.getTransaction().begin();
-    List<Article> result = em.createQuery("from Article", Article.class)
-        .getResultList();
-    for (Article article : result) {
-      System.out.println(article.toString());
-    }
-    em.getTransaction().commit();
-    em.close();
-  }
-
-  /* Method to UPDATE activity for an Article */
-  public void updateArticle(Integer articleId) {
-    EntityManager em = entityManagerFactory.createEntityManager();
-    em.getTransaction().begin();
-    Article article = (Article) em.find(Article.class, articleId);
-    em.merge(article);
-    em.getTransaction().commit();
-    em.close();
-  }
-
-  /* Method to DELETE an Article from the records */
-  public void deleteArticle(Integer articleId) {
-    EntityManager em = entityManagerFactory.createEntityManager();
-    em.getTransaction().begin();
-    Article article = (Article) em.find(Article.class, articleId);
-    em.remove(article);
-    em.getTransaction().commit();
-    em.close();
-  }
-
-
 }

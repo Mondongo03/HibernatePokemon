@@ -5,10 +5,20 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name = "movimiento")
 public class Movimiento {
-
+    /**
+     * La clase movimento es la entity de movmiento en la base de datos
+     * @param nombre es el nombre del movimiento
+     * @param tipo es el tipo del movimiento
+     * @param categoria es el tipo de movmiento o categoria del movimiento
+     * @param poder es la fuerza del movimiento
+     * @param pp es los usos del movimiento
+     * @param precision es el porcentaje de acertar del movimiento
+     * @param descripcion es la descripcion del movimiento
+     */
     @Id
     @Column(name = "nombre")
     private String nombre;
